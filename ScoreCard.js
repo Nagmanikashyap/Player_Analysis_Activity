@@ -75,7 +75,7 @@ function processPlayer(playerName, teamName, runs, balls, fours, sixes){
     }
     let teamNamePath = path.join(iplFolderPath, teamName); // creating all team paths seperately inside IPL folder
     if(fs.existsSync(teamNamePath) == false){
-        fs.mkdirSync(teamNamePath, teamName);
+        fs.mkdirSync(teamNamePath);
     }
     // player file
     let playersFilePath = path.join(teamNamePath, playerName + ".json");
