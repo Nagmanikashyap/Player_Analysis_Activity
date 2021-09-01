@@ -78,26 +78,53 @@ function processPlayer(playerName, teamName, runs, balls, fours, sixes){
         fs.mkdirSync(teamNamePath);
     }
     // player file
-    let playersFilePath = path.join(teamNamePath, playerName + ".json");
+    let playersFilePath = path.join(teamNamePath, playerName + ".xlsx");
     let playerArr = [];
     if(fs.existsSync(playersFilePath) == false){
         playerArr.push(obj);
     }else{
         //append
-        playerArr = getContent(playersFilePath);
+        playerArr = excelReader(playersFilePath, playerName);
         playerArr.push(obj);
     }
-    writeContent(playersFilePath, playerArr);
+    //writeContent(playersFilePath, playerArr);
+    excelWriter(playersFilePath, playerArr, playerName)
+
 }
-function getContent(playersFilePath){
-    let content = fs.readFileSync(playersFilePath);
-    return JSON.parse(content);
-}
-function writeContent(playersFilePath, content){
-    let jsonData = JSON.stringify(content);
-    fs.writeFileSync(playersFilePath, jsonData);
-}
+// function getContent(playersFilePath){
+//     let content = fs.readFileSync(playersFilePath);
+//     return JSON.parse(content);
+// }
+
+// function writeContent(playersFilePath, content){
+//     let jsonData = JSON.stringify(content);
+//     fs.writeFileSync(playersFilePath, jsonData);
+// }
 }
  module.exports ={
     processSinglematch
+}
+
+function excelWriter(filePath, json, sheetName) {
+    // workbook create
+    let newWB = xlsx.utils.book_new();
+    // worksheet
+    let newWS = xlsx.utils.json_to_sheet(json);
+    xlsx.utils.book_append_sheet(newWB, newWS, sheetName);
+    // excel file create 
+    xlsx.writeFile(newWB, filePath);
+}
+// // json data -> excel format convert
+// // -> newwb , ws , sheet name
+// // filePath
+// read 
+//  workbook get
+function excelReader(filePath, sheetName) {
+    // player workbook
+    let wb = xlsx.readFile(filePath);
+    // get data from a particular sheet in that wb
+    let excelData = wb.Sheets[sheetName];
+    // sheet to json 
+    let ans = xlsx.utils.sheet_to_json(excelData);
+    return ans;
 }
